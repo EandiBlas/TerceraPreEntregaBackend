@@ -1,0 +1,48 @@
+<div class="myBtn">
+        <h1>Bienvenido:{{user.username}}</h1>
+        <p>Email: {{user.email}}</p>
+        <p>Roll: {{user.role}}</p>
+        <button class="btn"><a href="/api/auth/logout">Cerrar sesión</a></button></a>
+        <button class="btn"><a href="/chat">Chat</a></button></a>
+</div>
+
+<div id="productos"></div>
+<div id="carrito"></div>
+<p>Productos en el carrito: <span id="contador">0</span></p>
+
+<h1>Carrito de Compras</h1>
+    
+<div id="carrito">
+    <!-- Aquí se renderizará el carrito y los productos -->
+</div>
+
+<script id="carrito-template" type="text/x-handlebars-template">
+    <h2>Carrito de compras</h2>
+    <ul>
+        {{#each products}}
+            <li>
+                {{nombre}} - Precio: {{precio}} - Cantidad: {{quantity}}
+                <button class="eliminar-producto" data-id="{{_id}}">Eliminar</button>
+            </li>
+        {{/each}}
+    </ul>
+    <p>Total: {{total}}</p>
+</script>
+    <div id="contenedor">
+    </div>
+    
+    <div id="carrito">
+        {{!-- Aquí se mostrará el carrito de compras --}}
+    </div>
+    
+    <script id="productos-template" type="text/x-handlebars-template">
+        {{!-- Define la plantilla para los productos --}}
+    </script>
+    
+    <script id="carrito-template" type="text/x-handlebars-template">
+        {{!-- Define la plantilla para el carrito --}}
+    </script>
+<script src="tu_script.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/products.js"></script>
+<script src="/js/cart.js"></script>
