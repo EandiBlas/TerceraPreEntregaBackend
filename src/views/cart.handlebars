@@ -1,0 +1,31 @@
+<div id="carrito">
+<h1>Carrito de Compras</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unitario</th>
+      <th>Total</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each cart.items}}
+      <tr>
+        <td>{{this.product.name}}</td>
+        <td>{{this.quantity}}</td>
+        <td>${{this.product.price}}</td>
+        <td>${{this.product.price this.quantity}}</td>
+        <td>
+          <button data-pid="{{this.product._id}}" class="remove-from-cart">Eliminar</button>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<p>Total del Carrito: ${{cart.totalPrice}}</p>
+<button class="finalize-purchase">Finalizar Compra</button>
+</div>
+<script src="/js/cart.js"></script>
+<script src="/js/products.js"></script>

@@ -108,17 +108,23 @@ body {
 
 .card {
     display: flex;
+    flex-direction: column; /* Añade esta línea para hacer que los elementos fluyan hacia abajo */
     align-items: center;
     background-color: aliceblue;
     margin: 0.5rem;
     padding: 1rem;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    /* Añade un tamaño fijo para la tarjeta */
+    width: 420px; /* Ajusta este valor según tus necesidades */
+    height: auto; /* Ajusta este valor según tus necesidades */
 }
 
-.imgshop {
-    width: 150px;
-    object-fit: contain;
+.card img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
 }
+
 
 .mytitulo {
     text-align: center;

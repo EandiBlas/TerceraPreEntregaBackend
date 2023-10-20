@@ -25,7 +25,8 @@ class CartService {
         cart.products.push({ _id: pid, quantity });
       }
 
-      return await this.cart.updateProductsInCart(cid, cart.products);
+      await this.cart.updateProductsInCart(cid, cart.products);
+      return  await this.cart.getCartById(cid);
     } catch (error) {
       throw error;
     }

@@ -1,16 +1,16 @@
 <div id="contenedor">
     {{#each listadeproductos}}
-        <div class="card">
-            <img src = "{{thumbnail}}" class="card-img-top imgshop" alt = "{{title}}">
-            <div>
-                <h5 class="card-title mytitulo">{{title}}</h5>
-                <p class="card-text mydescripcion">Categoria: {{category}}</p>
-                <p class="card-text mydescripcion">ID:{{_id}}</p>
-                <p class="card-text mydescripcion">Info: {{description}}</p>
-                <p class="card-text mydescripcion">Price:  ${{price}}</p>
-                <p class="card-text mydescripcion" id="stock">STOCK: {{product.stock}}</p>
-                <buttton class="btn mx-auto d-block myboton" id="#"><i class="fas fa-cart-plus"></i> Añadir al carrito </button>
-            </div>
+    <div class="card">
+        <img src ="{{thumbnail}}">
+        <div>
+            <h5 class="card-title mytitulo">{{title}}</h5>
+            <p class="card-text mydescripcion">Categoria: {{category}}</p>
+            <p class="card-text mydescripcion">ID:${{_id}}</p>
+            <p class="card-text mydescripcion">code:${{product.code}}</p>
+            <p class="card-text mydescripcion">Info: ${{product.description}}</p>
+            <p class="card-text mydescripcion">STOCK:${{product.stock}}</p>
+            <p class="card-text mydescripcion">$${product.price}</p>
+            <button class="btn mx-auto d-block mybutton" id="${product._id}" onclick="addCart('${product._id}')"> Añadir al carrito </button>
         </div>
     {{/each}}
 </div>

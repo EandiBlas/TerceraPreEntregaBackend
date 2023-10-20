@@ -1,24 +1,21 @@
-const socketClient = io();
+let cartId = 0;
+let saveCart;
 
-socketClient.on("enviodecarts", (cartData) => {
-    // Llama a una función para actualizar la vista del carrito con los datos recibidos
-    updateCartList(cartData.products);
-});
 
 function updateCartList(products) {
-    let cartContainer = document.getElementById("cart-container");
+    let cartContainer = document.getElementById("carrito");
     let cartContent = "";
 
     products.forEach((product) => {
         cartContent += `
             <div class="cart-item">
-                <img src="${product.thumbnail}" class="cart-item-image">
+                <img src="${product._id.thumbnail}" class="cart-item-image">
                 <div class="cart-item-details">
-                    <h5 class="cart-item-title">${product.title}</h5>
-                    <p class="cart-item-category">Categoría: ${product.category}</p>
-                    <p class="cart-item-id">ID: ${product._id}</p>
-                    <p class="cart-item-description">Descripción: ${product.description}</p>
-                    <p class="cart-item-price">$${product.price}</p>
+                    <h5 class="cart-item-title">${product._id.title}</h5>
+                    <p class="cart-item-category">Categoría: ${product._id.category}</p>
+                    <p class="cart-item-id">ID: ${product._id._id}</p>
+                    <p class="cart-item-description">Descripción: ${product._id.description}</p>
+                    <p class="cart-item-price">$${product._id.price}</p>
                 </div>
             </div>
         `;
@@ -27,15 +24,35 @@ function updateCartList(products) {
     cartContainer.innerHTML = cartContent;
 }
 
-// Agrega un listener de clic a la ventana (porque los botones se agregan dinámicamente)
-window.addEventListener("click", (event) => {
-    if (event.target && event.target.id.startsWith("boton")) {
-        const productId = event.target.id.substring(5); // Obtén el ID del producto
-        addProductToCart(productId);
+fetch('/api/carts/', {
+    method: 'POST',
+    body: JSON.stringify({ products: [] }),
+    headers: {
+      'Content-Type': 'application/json'
     }
-});
+  }).then(result => {
+    result.json().then(data => {
+      cartId = data._id
+    })
+  })
+  console.log(cartId)
 
-function addProductToCart(productId) {
-    // Envía una solicitud al servidor para agregar el producto al carrito
-    socketClient.emit("add-to-cart", { productId });
-}
+function addCart(id) {
+    fetch(`/api/carts/${cartId}/`, {
+      method: 'POST',
+      body: JSON.stringify({
+        pid: id,
+        quantity: 1,
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(result => {
+      result.json().then(data => {
+        saveCart = data.cart.products
+        console.log(saveCart)
+        updateCartList(saveCart)
+      })
+    })
+  }
+  

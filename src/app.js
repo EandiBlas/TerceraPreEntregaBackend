@@ -40,7 +40,7 @@ app.use(session({
         mongoUrl: config.mongo_uri
     }),
     secret: config.session_secret,
-    cookie: {maxAge:60000}
+    cookie: {maxAge:1200000}
 }))
 
 app.use(passport.initialize())
