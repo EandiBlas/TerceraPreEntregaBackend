@@ -17,6 +17,8 @@ function updateCartList(products) {
                     <p class="cart-item-description">Descripción: ${product._id.description}</p>
                     <p class="cart-item-price">$${product._id.price}</p>
                 </div>
+                <p class="cart-item-quantity">Cantidad: ${product.quantity}</p>
+                <button class="cart-item-remove-button" onclick="removeCart(${product._id._id})">Eliminar</button>
             </div>
         `;
     });

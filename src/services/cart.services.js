@@ -16,9 +16,11 @@ class CartService {
       if (!cart) {
         throw new Error(`Cart with ID: ${cid} not found`);
       }
-
-      const productIndex = cart.products.findIndex((product) => product._id.toString() === pid);
-
+      const filter= cart.products.findIndex(product =>{
+        console.log(product._id)
+        return product._id == pid
+      })
+      const productIndex = cart.products.findIndex((product) => product._id.toString() == pid);
       if (productIndex > -1) {
         cart.products[productIndex].quantity += quantity;
       } else {
