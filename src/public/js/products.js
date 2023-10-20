@@ -26,34 +26,3 @@ fetch('http://localhost:8080/api/products')
   // Set the innerHTML after the loop
   div.innerHTML = productos;
 }
-
-
-// fetch('/api/carts/', {
-//   method: 'POST',
-//   body: JSON.stringify({ products: [] }),
-//   headers: {
-//     'Content-Type': 'application/json'
-//   }
-// }).then(result => {
-//   result.json().then(data => {
-//     cartId = data._id
-//   })
-// })
-// console.log(cartId)
-
-// function addCart(id) {
-//   fetch(`/api/carts/${cartId}/`, {
-//     method: 'POST',
-//     body: JSON.stringify({
-//       pid: id,
-//       quantity: 1,
-//     }),
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-//   }).then(result => {
-//     result.json().then(data => {
-//       saveCart = data.cart.products
-//     })
-//   })
-// }
