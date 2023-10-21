@@ -30,4 +30,13 @@ export default class UsersManager {
         }
     }
 
+    async findUserEmail(email) {
+        try {
+            const user = await usersModel.findOne({email})
+            return user
+        } catch (error) {
+            return error
+        }
+    }
+
 }

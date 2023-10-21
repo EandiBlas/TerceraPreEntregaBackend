@@ -1,8 +1,10 @@
 import CartService from "../services/cart.services.js";
+import usersManager from "../persistencia/dao/managers/userManagerMongo.js";
 
 class CartsController {
     constructor() {
         this.service = new CartService();
+        this.userService = new usersManager();
     }
 
     addProductToCart = async (req, res) => {
@@ -25,11 +27,12 @@ class CartsController {
 
     createCart = async (req, res) => {
         try {
+            const fuser =  await this.userService.findUser(req.session.username)
             const { products } = req.body;
             if (!Array.isArray(products)) {
                 return res.status(400).send('Invalid request: products must be an array');
             }
-            const cart = await this.service.createCart(products);
+            const cart = await this.service.createCart(products,fuser.email);
             res.status(200).json(cart);
         } catch (error) {
             res.status(500).json(error.message);

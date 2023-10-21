@@ -1,3 +1,4 @@
+import {ticketModel} from "../persistencia/dao/models/ticket.model.js";
 import CartManager from "../persistencia/dao/managers/cartManagerMongo.js";
 import ProductManager from "../persistencia/dao/managers/productManagerMongo.js";
 import UsersManager from "../persistencia/dao/managers/userManagerMongo.js";
@@ -16,25 +17,24 @@ class CartService {
       if (!cart) {
         throw new Error(`Cart with ID: ${cid} not found`);
       }
-      const filter= cart.products.findIndex(product =>{
-        console.log(product._id)
-        return product._id == pid
-      })
-      const productIndex = cart.products.findIndex((product) => product._id.toString() == pid);
+      const productIndex = cart.products.findIndex((p) => {
+        return p.product._id.toString() == pid;
+      });
       if (productIndex > -1) {
         cart.products[productIndex].quantity += quantity;
       } else {
-        cart.products.push({ _id: pid, quantity });
+        cart.products.push({ product: pid, quantity });
       }
 
       await this.cart.updateProductsInCart(cid, cart.products);
-      return  await this.cart.getCartById(cid);
+
+      return await this.cart.getCartById(cid);
     } catch (error) {
       throw error;
     }
-  }
-
-  createCart = async (products) => {
+  };
+  
+  createCart = async (products,vemail) => {
     let cartData = {};
     const validProducts = [];
     for (let i = 0; i < products.length; i++) {
@@ -45,6 +45,7 @@ class CartService {
       }
       validProducts.push(product);
     }
+    cartData.purchaser = vemail;
     cartData.products = validProducts;
     return await this.cart.addCart(cartData)
   };
@@ -139,23 +140,13 @@ class CartService {
 
   // Método para finalizar la compra de un carrito
   finalizeCartPurchase = async (cid) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-  
-    // Función para obtener el correo del usuario asociado al carrito
-    const getUserEmailAssociatedWithCart = async (cart) => {
-      const user = await this.user.findUserById(cart.userId);
-  
+
+    try {
+      const cart = await this.cart.getCartById(cid);
+      const user = await this.user.findUserEmail(cart.purchaser);
       if (!user) {
         throw new Error('Usuario asociado al carrito no encontrado');
       }
-  
-      return user.email;
-    };
-  
-    try {
-      const cart = await this.cart.getCartById(cid);
-  
       if (!cart) {
         throw new Error('Carrito no encontrado');
       }
@@ -163,31 +154,50 @@ class CartService {
       const productsToUpdate = [];
       const productsToDelete = [];
   
+      const productsToBuy = []
+
       for (const product of cart.products) {
-        const productData = await this.product.getProductById(product._id);
+        console.log(product)
+        const productData = await this.product.getProductById(product.product._id);
   
+        let quantityProduct = true;
+
+        let productExist = true;
+
         if (!productData) {
-          throw new Error(`Producto no encontrado en la base de datos: ${product._id}`);
+           productExist = false;
         }
   
-        if (product.quantity > productData.stock) {
-          throw new Error(`No hay suficiente stock para el producto: ${productData.title}`);
+        if (product.quantity >= productData.stock) {
+          quantityProduct = false;
         }
-  
-        productData.stock -= product.quantity;
-        productsToUpdate.push(productData);
-        productsToDelete.push(product);
+
+        if(productExist & quantityProduct){
+          productData.stock -= product.quantity;
+          productsToUpdate.push(productData);
+          productsToDelete.push(product);
+          productsToBuy.push(product)
+        }
+        
       }
   
       for (const productData of productsToUpdate) {
         await this.product.updateProduct(productData._id, productData);
       }
-  
+
+      const calculateTotalAmount = (products) => {
+        let totalAmount = 0;
+        for (const product of products) {
+          totalAmount += product.product.price * product.quantity;
+        }
+        return totalAmount;
+      }
+      const result = calculateTotalAmount(productsToBuy);
+      console.log(result)
       const ticket = new ticketModel({
-        code: ticketModel.generateUniqueTicketCode(),
         purchase_datetime: new Date(),
-        amount: ticketModel.calculateTotalAmount(cart.products),
-        purchase: await getUserEmailAssociatedWithCart(cart),
+        amount: result,
+        purchaser: cart.purchaser,
       });
   
       await ticket.save();
@@ -196,13 +206,8 @@ class CartService {
   
       await this.cart.updateCart(cid, cart.products);
   
-      await session.commitTransaction();
-      session.endSession();
-  
       return { message: 'Compra exitosa', ticket: ticket };
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
       throw error;
     }
   };

@@ -17,7 +17,7 @@ class CartManager {
     getCartById = async (cartId) => {
 
         try {
-            const cart = await cartModel.findById(cartId).populate('products._id');
+            const cart = await cartModel.findById(cartId).populate('products.product');
             return cart;
         } catch (err) {
             console.error('Error al obtener el carrito por ID:', err.message);
@@ -35,34 +35,6 @@ class CartManager {
         }
     };
 
-
-    // addProductInCart = async (cid, obj) => {
-    //     try {
-    //       const filter = { _id: cid, 'products._id': obj._id };
-    //       const cart = await cartModel.findById(cid);
-    //       const findProduct = cart.products.some(
-    //         (product) => product._id.toString() == obj._id
-    //       );
-    //       if (findProduct) {
-    //         const update = {
-    //           $inc: { 'products.$.quantity': obj.quantity ? obj.quantity : 1 },
-    //         };
-    //         await cartModel.updateOne(filter, update);
-    //       } else {
-    //         const update = {
-    //           $push: { products: { _id: obj._id, quantity: obj.quantity } },
-    //         };
-    //         await cartModel.updateOne({ _id: cid }, update);
-    //       }
-    
-    //       return await cartModel.findById(cid);
-    //     } catch (err) {
-    //       console.error('Error al agregar el producto al carrito:', err.message);
-    //       return err;
-    //     }
-    // };
-
-      
     deleteProductInCart = async (cid, products) => {
         try {
             return await cartModel.findOneAndUpdate(
