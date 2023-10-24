@@ -39,7 +39,7 @@ class CartService {
     const validProducts = [];
     for (let i = 0; i < products.length; i++) {
       const product = products[i]
-      const checkId = await this.product.getProductById(product._id);
+      const checkId = await this.product.getProductById(product.product._id);
       if (checkId === null) {
         throw new Error(`Product with ID ${product._id} does not exist`);
       }
@@ -67,7 +67,7 @@ class CartService {
     if (checkId === null) {
       throw new Error(`Product with ID ${pid} does not exist`);
     }
-    const productIndex = products.findIndex(product => product._id == pid);
+    const productIndex = products.findIndex(product => product.product._id == pid);
     if (productIndex !== -1) {
       products[productIndex].quantity += quantity;
     } else {
@@ -84,7 +84,7 @@ class CartService {
     try {
       const cart = await this.cart.getCartById(cid);
 
-      const productIndex = cart.products.findIndex((product) => product._id == pid);
+      const productIndex = cart.products.findIndex((product) => product.product._id == pid);
 
       if (productIndex > -1) {
         if (quantity > 0) {
@@ -106,7 +106,7 @@ class CartService {
   deleteProductInCart = async (cid, pid) => {
     try {
       const cart = await this.cart.getCartById(cid);
-      const productIndex = cart.products.findIndex((product) => product._id.toString() === pid);
+      const productIndex = cart.products.findIndex((product) => product.product._id.toString() == pid);
       if (productIndex === -1) {
         throw new Error(`Product with ID: ${pid} not found in cart`);
       }
@@ -117,6 +117,7 @@ class CartService {
       throw error;
     }
   }
+
 
 
   emptyCart = async (cid) => {

@@ -83,15 +83,28 @@ class CartsController {
 
     deleteProductInCart = async (req, res) => {
         const { cid, pid } = req.params;
-    
+      
         try {
+          // Intenta eliminar el producto del carrito
           const updatedCart = await this.service.deleteProductInCart(cid, pid);
-          res.status(200).send({ status: 'success', message: `Deleted product with ID: ${pid}`, cart: updatedCart });
+      
+          if (!updatedCart) {
+            // Si el carrito no se encuentra, responde con un mensaje 404
+            res.status(404).send({ status: 'error', message: `Cart with ID: ${cid} not found` });
+          } else if (!updatedCart.products) {
+            // Si el carrito no contiene productos, puedes responder de manera específica
+            res.status(404).send({ status: 'error', message: 'No products in the cart' });
+          } else {
+            // Eliminación exitosa, responde con un mensaje 200 y los detalles del carrito actualizado
+            res.status(200).send({ status: 'success', message: `Deleted product with ID: ${pid}`, cart: updatedCart });
+          }
         } catch (error) {
+          // Maneja cualquier otro error que pueda ocurrir
           console.log(error);
           res.status(500).send({ status: 'error', message: error.message });
         }
-    }
+      }
+      
 
     emptyCart = async (req, res) => {
         const { cid } = req.params;
